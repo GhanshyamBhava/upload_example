@@ -15,5 +15,6 @@ config.tx_extbase {
 	}
 	objects {
 		TYPO3\CMS\Extbase\Domain\Model\FileReference.className = Helhum\UploadExample\Domain\Model\FileReference
+		TYPO3\CMS\Extbase\Mvc\Controller\MvcPropertyMappingConfigurationService.className = Helhum\UploadExample\Property\MvcPropertyMappingConfigurationService
 	}
 }
