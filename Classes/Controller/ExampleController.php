@@ -26,6 +26,8 @@ namespace Helhum\UploadExample\Controller;
  ***************************************************************/
 use Helhum\UploadExample\Property\TypeConverter\UploadedFileReferenceConverter;
 use TYPO3\CMS\Extbase\Property\PropertyMappingConfiguration;
+use TYPO3\CMS\Extbase\Annotation as Extbase;
+
 
 /**
  *
@@ -44,27 +46,6 @@ class ExampleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
      */
     protected $exampleRepository;
 
-    /**
-     * action hello
-     *
-     * @return string
-     */
-    public function helloAction()
-    {
-        return 'Hello World!';
-    }
-
-    /**
-     * Action greeting
-     *
-     * @param string $name
-     * @return string
-     */
-    public function greetingAction($name)
-    {
-        $this->view->assign('name', $name);
-        $this->view->assign('layoutName', 'Funny');
-    }
 
     /**
      * Action list
@@ -150,7 +131,7 @@ class ExampleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
      * action delete
      *
      * @param \Helhum\UploadExample\Domain\Model\Example $example
-     * @ignoreValidation $example
+     * @Extbase\IgnoreValidation("example")
      */
     public function deleteAction(\Helhum\UploadExample\Domain\Model\Example $example)
     {
@@ -170,6 +151,7 @@ class ExampleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
         ];
         /** @var PropertyMappingConfiguration $newExampleConfiguration */
         $newExampleConfiguration = $this->arguments[$argumentName]->getPropertyMappingConfiguration();
+
         $newExampleConfiguration->forProperty('image')
             ->setTypeConverterOptions(
                 'Helhum\\UploadExample\\Property\\TypeConverter\\UploadedFileReferenceConverter',
@@ -180,5 +162,23 @@ class ExampleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControll
                 'Helhum\\UploadExample\\Property\\TypeConverter\\UploadedFileReferenceConverter',
                 $uploadConfiguration
             );
+
+            // Check out wather argument (yourObject) exist or not.
+            if($this->request->hasArgument($argumentName)) {
+                $argument = $this->request->getArgument($argumentName);
+
+                // Manage multiple videos.
+                if(!empty($argument['imageCollection'])) {
+                    $newExampleConfiguration->forProperty('imageCollection')->allowAllProperties();
+                    $newExampleConfiguration->allowModificationForSubProperty('imageCollection');
+                    foreach($argument['imageCollection'] as $positionIndex => $positionPropertyArray)
+                    {
+                        $propertyPath = 'imageCollection.' . $positionIndex;
+                        $newExampleConfiguration->forProperty($propertyPath)->allowAllProperties();
+                        $newExampleConfiguration->allowCreationForSubProperty($propertyPath);
+                        $newExampleConfiguration->allowModificationForSubProperty($propertyPath);  
+                    } // End foreach
+                }
+            } // end if(request->hasArgument)
     }
 }
