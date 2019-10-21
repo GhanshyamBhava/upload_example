@@ -15,9 +15,16 @@
 <label for="image_collection">
 	<f:translate key="tx_uploadexample_domain_model_example.image_collection" />
 </label><br />
-	<h:form.upload property="imageCollection.0">
-		<f:if condition="{resource}">
-			<f:image image="{resource}" alt="" width="50"/>
-		</f:if>
-	</h:form.upload>
-	<br />
+<h:form.multiupload property="imageCollection" resources="resources">
+	<ul>
+		<f:for each="{resources}" as="resource">
+			<li>
+				<label>
+					<h:form.multiupload.delete property="imageCollection" value="{resource}" />
+					<f:image image="{resource}" alt="" width="50"/>
+				</label>
+			</li>
+		</f:for>
+	</ul>
+</h:form.multiupload>
+<br />
