@@ -15,5 +15,21 @@ if (!defined('TYPO3_MODE')) {
     ]
 );
 
+if (version_compare(TYPO3_branch, '7.0', '>')) {
+    if (TYPO3_MODE === 'BE') {
+        $icons = [
+            'ext-upload-icon' => 'Extension.png',
+        ];
+        $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconRegistry::class);
+        foreach ($icons as $identifier => $path) {
+            $iconRegistry->registerIcon(
+                $identifier,
+                \TYPO3\CMS\Core\Imaging\IconProvider\BitmapIconProvider::class,
+                ['source' => 'EXT:upload_example/Resources/Public/Icons/' . $path]
+            );
+        }
+    }
+}
+
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerTypeConverter('Helhum\\UploadExample\\Property\\TypeConverter\\UploadedFileReferenceConverter');
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerTypeConverter('Helhum\\UploadExample\\Property\\TypeConverter\\ObjectStorageConverter');
